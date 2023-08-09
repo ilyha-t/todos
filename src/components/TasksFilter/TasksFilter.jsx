@@ -1,17 +1,15 @@
 import React from 'react';
+import FilterItem from "../FilterItem/FilterItem";
 
-const TasksFilter = () => {
+const TasksFilter = ({filter, changeFilterTodo}) => {
+    const filters = ['All','Active','Completed'];
     return (
         <ul className="filters">
-            <li>
-                <button className="selected">All</button>
-            </li>
-            <li>
-                <button>Active</button>
-            </li>
-            <li>
-                <button>Completed</button>
-            </li>
+            {filters.map(filterItem => <FilterItem key={filterItem}
+                                                   filter={filterItem}
+                                                   changeFilterTodo={changeFilterTodo}
+                                                   currentFilter={filter}
+            />)}
         </ul>
     );
 };

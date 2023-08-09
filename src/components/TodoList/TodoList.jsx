@@ -1,7 +1,7 @@
 import React from 'react';
 import TodoItem from "../TodoItem/TodoItem";
 
-const TodoList = ({todos, doneTodo, deleteTodo}) => {
+const TodoList = ({todos, doneTodo, deleteTodo, editTodo}) => {
 
     return (
         <ul className="todo-list">
@@ -9,6 +9,7 @@ const TodoList = ({todos, doneTodo, deleteTodo}) => {
                                          todo={todo}
                                          doneTodo={doneTodo}
                                          deleteTodo={deleteTodo}
+                                         editTodo={editTodo}
             />)}
         </ul>
     );
