@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 export default class NewTaskForm extends Component {
     constructor() {
@@ -6,7 +7,17 @@ export default class NewTaskForm extends Component {
         this.state = {
             label: ''
         };
-    }
+    };
+
+    static defaultProps = {
+        config: {
+            appName: 'Todo or not Todo?'
+        }
+    };
+
+    static propTypes = {
+        config: PropTypes.object
+    };
 
     onChangeLabel = (label) => {
         this.setState({label});
@@ -14,14 +25,17 @@ export default class NewTaskForm extends Component {
 
     onSubmitForm = (e) => {
         e.preventDefault();
-        this.props.addTodo(this.state.label);
+        const label = this.state.label;
+        if (label.trim().length > 0) {
+            this.props.addTodo(label);
+        }
         this.setState({label: ''});
     };
 
     render() {
         return (
             <header className="header">
-                <h1>Todos</h1>
+                <h1>{this.props.config.appName}</h1>
                 <form onSubmit={this.onSubmitForm}>
                     <input className="new-todo"
                            placeholder="What needs to be done?"

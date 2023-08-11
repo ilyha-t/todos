@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import TodoList from "../TodoList/TodoList";
 import Footer from "../Footer/Footer";
 import NewTaskForm from "../NewTaskForm/NewTaskForm";
-import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+import config from '../../config/configUI';
 
 export default class App extends Component {
     constructor() {
@@ -14,12 +14,13 @@ export default class App extends Component {
         };
     }
 
+
     addTodo = (label) =>  {
         new Promise(resolve => {
             this.setState(() => {
                 return {
                     todos: [...this.state.todos,
-                        {id: Date.now(), description: label, done: false, important: false, created: formatDistanceToNow(new Date())}]
+                        {id: Date.now(), description: label, done: false, important: false, created: new Date()}]
                 };
             });
             resolve();
@@ -104,11 +105,19 @@ export default class App extends Component {
     render() {
         return (
             <section className="todoapp">
-                <NewTaskForm addTodo={this.addTodo} />
-                <TodoList todos={this.state.filterTodos} doneTodo={this.doneTodo} deleteTodo={this.deleteTodo} editTodo={this.editTodo}/>
+                <NewTaskForm addTodo={this.addTodo}
+                             config={config}
+                />
+                <TodoList todos={this.state.filterTodos}
+                          doneTodo={this.doneTodo}
+                          deleteTodo={this.deleteTodo}
+                          editTodo={this.editTodo}
+                          config={config}
+                />
                 <Footer todoCount={this.state.todos.filter(todo => !todo.done).length}
                         filter={this.state.filter}
                         changeFilterTodo={this.changeFilterTodo}
+                        filters={config.filters}
                         clearCompleted={this.clearCompleted}
                 />
             </section>
