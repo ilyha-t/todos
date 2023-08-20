@@ -1,12 +1,12 @@
-import React, { Component } from "react";
-import formatDistanceToNow from "date-fns/formatDistanceToNow";
+import React, { Component } from 'react';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 export default class TodoItem extends Component {
   constructor(props) {
     super(props);
     this.state = {
       edit: false,
-      updatePeriod: "",
+      updatePeriod: '',
     };
     this.inputRef = React.createRef();
   }
@@ -49,12 +49,7 @@ export default class TodoItem extends Component {
 
   render() {
     return (
-      <li
-        className={
-          (this.props.todo.done ? "completed" : undefined) ||
-          (this.state.edit ? "editing" : undefined)
-        }
-      >
+      <li className={(this.props.todo.done ? 'completed' : undefined) || (this.state.edit ? 'editing' : undefined)}>
         <div className="view">
           <form>
             <input
@@ -68,14 +63,8 @@ export default class TodoItem extends Component {
               <span className="created">{this.state.updatePeriod}</span>
             </label>
           </form>
-          <button
-            className="icon icon-edit"
-            onClick={this.activateEditMode}
-          ></button>
-          <button
-            className="icon icon-destroy"
-            onClick={() => this.props.deleteTodo(this.props.todo.id)}
-          ></button>
+          <button className="icon icon-edit" onClick={this.activateEditMode}></button>
+          <button className="icon icon-destroy" onClick={() => this.props.deleteTodo(this.props.todo.id)}></button>
         </div>
         <form
           onSubmit={(e) => {

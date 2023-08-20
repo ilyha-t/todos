@@ -1,15 +1,16 @@
-import React, { Component } from "react";
-import TodoList from "../TodoList/TodoList";
-import Footer from "../Footer/Footer";
-import NewTaskForm from "../NewTaskForm/NewTaskForm";
-import config from "../../config/configUI";
+import React, { Component } from 'react';
+
+import TodoList from '../TodoList/TodoList';
+import Footer from '../Footer/Footer';
+import NewTaskForm from '../NewTaskForm/NewTaskForm';
+import config from '../../config/configUI';
 
 export default class App extends Component {
   constructor() {
     super();
     this.state = {
       todos: [],
-      filter: "All",
+      filter: 'All',
       filterTodos: [],
     };
   }
@@ -55,10 +56,7 @@ export default class App extends Component {
       const findIndex = this.state.todos.findIndex((f) => f.id === id);
       this.setState(() => {
         return {
-          todos: [
-            ...this.state.todos.slice(0, findIndex),
-            ...this.state.todos.slice(findIndex + 1),
-          ],
+          todos: [...this.state.todos.slice(0, findIndex), ...this.state.todos.slice(findIndex + 1)],
         };
       });
       resolve();
@@ -69,12 +67,12 @@ export default class App extends Component {
 
   filterTodo = (filterName) => {
     switch (filterName) {
-      case "Active":
+      case 'Active':
         this.setState({
           filterTodos: this.state.todos.filter((todo) => !todo.done),
         });
         break;
-      case "Completed":
+      case 'Completed':
         this.setState({
           filterTodos: this.state.todos.filter((todo) => todo.done),
         });

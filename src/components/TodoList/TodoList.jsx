@@ -1,5 +1,6 @@
-import React from "react";
-import TodoItem from "../TodoItem/TodoItem";
+import React from 'react';
+
+import TodoItem from '../TodoItem/TodoItem';
 
 const TodoList = ({ todos, doneTodo, deleteTodo, editTodo, config }) => {
   return (

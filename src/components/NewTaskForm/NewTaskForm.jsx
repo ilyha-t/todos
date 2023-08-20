@@ -1,17 +1,17 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 export default class NewTaskForm extends Component {
   constructor() {
     super();
     this.state = {
-      label: "",
+      label: '',
     };
   }
 
   static defaultProps = {
     config: {
-      appName: "Todo or not Todo?",
+      appName: 'Todo or not Todo?',
     },
   };
 
@@ -29,7 +29,7 @@ export default class NewTaskForm extends Component {
     if (label.trim().length > 0) {
       this.props.addTodo(label);
     }
-    this.setState({ label: "" });
+    this.setState({ label: '' });
   };
 
   render() {
