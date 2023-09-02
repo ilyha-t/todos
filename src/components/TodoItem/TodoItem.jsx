@@ -1,90 +1,84 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from "react";
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
-export default class TodoItem extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      edit: false,
-      updatePeriod: '',
-    };
-    this.inputRef = React.createRef();
+function TodoItem({ props, config, doneTodo, deleteTodo, editTodo }) {
+  const inputRef = React.createRef();
+
+  const [todo, setTodo] = useState({
+    edit: false,
+    updatePeriod: '',
+  });
+
+  useEffect(() => {
+    setTodo({...todo, updatePeriod: formatDistanceToNow(props.created)});
+    const idUpdateF = updateInterval();
+    return () => clearInterval(idUpdateF);
+  }, [])
+
+
+
+  function updateInterval() {
+    const updateF = setInterval(() => {
+      setTodo({...todo, updatePeriod: formatDistanceToNow(props.created)});
+    }, config.updateIntervalCreated);
+    return updateF;
   }
 
-  updateIntervalFunc;
-
-  componentDidMount() {
-    this.setState({
-      updatePeriod: formatDistanceToNow(this.props.todo.created),
-    });
-    this.updateIntervalFunc = setInterval(() => {
-      this.setState({
-        updatePeriod: formatDistanceToNow(this.props.todo.created),
-      });
-    }, this.props.config.updateIntervalCreated);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.updateIntervalFunc);
-  }
-
-  activateEditMode = () => {
-    new Promise((resolve) => {
-      if (!this.props.todo.done) {
-        this.setState(() => {
-          return { edit: !this.state.edit };
+  function activateEditMode() {
+      if (!props.done) {
+        setTodo(() => {
+          return { ...todo, edit: !todo.edit };
         });
+        inputRef.current.focus();
       }
-      resolve();
-    }).then(() => this.inputRef.current.focus());
   };
 
-  cancelEdit = (code) => {
+  function cancelEdit(code)  {
     if (code === 27) {
-      this.setState(() => {
-        return { edit: false };
+      setTodo(() => {
+        return { ...todo, edit: false };
       });
     }
   };
 
-  render() {
     return (
-      <li className={(this.props.todo.done ? 'completed' : undefined) || (this.state.edit ? 'editing' : undefined)}>
+      <li className={(props.done ? 'completed' : undefined) || (todo.edit ? 'editing' : undefined)}>
         <div className="view">
           <form>
             <input
               className="toggle"
               type="checkbox"
-              checked={this.props.todo.done}
-              onChange={() => this.props.doneTodo(this.props.todo)}
+              checked={props.done}
+              onChange={() => doneTodo(props)}
             />
-            <label onClick={() => this.props.doneTodo(this.props.todo)}>
-              <span className="description">{this.props.todo.description}</span>
-              <span className="created">{this.state.updatePeriod}</span>
+            <label onClick={() => doneTodo(props)}>
+              <span className="description">{props.description}</span>
+              <span className="created">{todo.updatePeriod}</span>
             </label>
           </form>
-          <button className="icon icon-edit" onClick={this.activateEditMode}></button>
-          <button className="icon icon-destroy" onClick={() => this.props.deleteTodo(this.props.todo.id)}></button>
+          <button className="icon icon-edit" onClick={activateEditMode}></button>
+          <button className="icon icon-destroy" onClick={() => deleteTodo(props.id)}></button>
         </div>
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            this.setState(() => {
-              return { edit: !this.state.edit };
+            setTodo(() => {
+              return { ...todo, edit: !todo.edit };
             });
           }}
         >
           <input
             className="edit"
             onChange={(e) => {
-              this.props.editTodo(this.props.todo, e.target.value);
+              editTodo(props, e.target.value);
             }}
-            onKeyDown={(e) => this.cancelEdit(e.keyCode)}
-            value={this.props.todo.description}
-            ref={this.inputRef}
+            onKeyDown={(e) => cancelEdit(e.keyCode)}
+            value={props.description}
+            ref={inputRef}
           />
         </form>
       </li>
     );
-  }
 }
+
+export default TodoItem;

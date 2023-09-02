@@ -1,26 +1,23 @@
-import React, { Component } from 'react';
+import React, { useState } from "react";
 
 import TodoList from '../TodoList/TodoList';
 import Footer from '../Footer/Footer';
 import NewTaskForm from '../NewTaskForm/NewTaskForm';
 import config from '../../config/configUI';
 
-export default class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      todos: [],
-      filter: 'All',
-      filterTodos: [],
-    };
-  }
+function App() {
+  const [data, setData] = useState({
+    todos: [],
+    filter: 'All',
+    filterTodos: [],
+  });
 
-  addTodo = (label) => {
-    new Promise((resolve) => {
-      this.setState(() => {
+  function addTodo(label) {
+      setData(prevData => {
         return {
+          ...prevData,
           todos: [
-            ...this.state.todos,
+            ...prevData.todos,
             {
               id: Date.now(),
               description: label,
@@ -28,114 +25,92 @@ export default class App extends Component {
               important: false,
               created: new Date(),
             },
-          ],
-        };
-      });
-      resolve();
-    }).then(() => this.filterTodo(this.state.filter));
+          ]
+        }});
   };
 
-  doneTodo = (todo) => {
-    new Promise((resolve) => {
-      const findIndex = this.state.todos.findIndex((f) => f.id === todo.id);
-      this.setState(() => {
+  function doneTodo(todo) {
+      const findIndex = data.todos.findIndex((f) => f.id === todo.id);
+      setData(() => {
         return {
+          ...data,
           todos: [
-            ...this.state.todos.slice(0, findIndex),
+            ...data.todos.slice(0, findIndex),
             { ...todo, done: !todo.done },
-            ...this.state.todos.slice(findIndex + 1),
+            ...data.todos.slice(findIndex + 1),
           ],
         };
       });
-      resolve();
-    }).then(() => this.filterTodo(this.state.filter));
   };
 
-  deleteTodo = (id) => {
-    new Promise((resolve) => {
-      const findIndex = this.state.todos.findIndex((f) => f.id === id);
-      this.setState(() => {
+  function deleteTodo(id) {
+      setData((prevData) => {
         return {
-          todos: [...this.state.todos.slice(0, findIndex), ...this.state.todos.slice(findIndex + 1)],
+          ...prevData,
+          todos: data.todos.filter((taskId) => taskId.id !== id),
         };
       });
-      resolve();
-    }).then(() => {
-      this.filterTodo(this.state.filter);
-    });
   };
 
-  filterTodo = (filterName) => {
+  function filterTodo(filterName) {
     switch (filterName) {
       case 'Active':
-        this.setState({
-          filterTodos: this.state.todos.filter((todo) => !todo.done),
-        });
-        break;
+        return data.todos.filter((todo) => !todo.done);
       case 'Completed':
-        this.setState({
-          filterTodos: this.state.todos.filter((todo) => todo.done),
-        });
-        break;
+        return data.todos.filter((todo) => todo.done);
       default:
-        this.setState({ filterTodos: [...this.state.todos] });
-        break;
+        return data.todos;
     }
   };
 
-  changeFilterTodo = (element) => {
-    new Promise((resolve) => {
-      this.setState({ filter: element.target.textContent });
-      resolve();
-    }).then(() => this.filterTodo(this.state.filter));
+  function changeFilterTodo(element) {
+      setData(prevData => {
+        return {...prevData, filter: element.target.textContent };
+      });
   };
 
-  clearCompleted = () => {
-    new Promise((resolve) => {
-      this.setState(() => {
+  function clearCompleted() {
+      setData(() => {
         return {
-          todos: this.state.todos.filter((todo) => !todo.done),
+          ...data,
+          todos: data.todos.filter((todo) => !todo.done),
         };
       });
-      resolve();
-    }).then(() => this.filterTodo(this.state.filter));
   };
 
-  editTodo = (todo, value) => {
-    new Promise((resolve) => {
-      const findIndex = this.state.todos.findIndex((f) => f.id === todo.id);
-      this.setState(() => {
+  function editTodo(todo, value) {
+      const findIndex = data.todos.findIndex((f) => f.id === todo.id);
+      setData(() => {
         return {
+          ...data,
           todos: [
-            ...this.state.todos.slice(0, findIndex),
+            ...data.todos.slice(0, findIndex),
             { ...todo, description: value },
-            ...this.state.todos.slice(findIndex + 1),
+            ...data.todos.slice(findIndex + 1),
           ],
         };
       });
-      resolve();
-    }).then(() => this.filterTodo(this.state.filter));
   };
 
-  render() {
     return (
       <section className="todoapp">
-        <NewTaskForm addTodo={this.addTodo} config={config} />
+        <NewTaskForm addTodo={addTodo} config={config} />
         <TodoList
-          todos={this.state.filterTodos}
-          doneTodo={this.doneTodo}
-          deleteTodo={this.deleteTodo}
-          editTodo={this.editTodo}
+          todos={filterTodo(data.filter)}
+          doneTodo={doneTodo}
+          deleteTodo={deleteTodo}
+          editTodo={editTodo}
           config={config}
         />
         <Footer
-          todoCount={this.state.todos.filter((todo) => !todo.done).length}
-          filter={this.state.filter}
-          changeFilterTodo={this.changeFilterTodo}
+          todoCount={data.todos.filter((todo) => !todo.done).length}
+          filter={data.filter}
+          changeFilterTodo={changeFilterTodo}
           filters={config.filters}
-          clearCompleted={this.clearCompleted}
+          clearCompleted={clearCompleted}
         />
       </section>
     );
-  }
 }
+
+export default App;

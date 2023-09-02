@@ -55,13 +55,12 @@
     "prettier": "^3.0.1"
   },
   "husky": {
-    "pre-commit": "list-staged"
+    "pre-commit": "lint-staged"
   },
   "lint-staged": {
-    "*.jsx": [
+    "*.{js,jsx}": [
       "npm run lint:fix",
-      "npm run format",
-      "git add ."
+      "npm run format"
     ]
   }
 }

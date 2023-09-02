@@ -2,7 +2,7 @@ import React from 'react';
 
 import FilterItem from '../FilterItem/FilterItem';
 
-const TasksFilter = ({ filters, filter, changeFilterTodo }) => {
+const TasksFilter = ({ filters = ['All'], filter, changeFilterTodo }) => {
   return (
     <ul className="filters">
       {filters.map((filterItem) => (
@@ -10,10 +10,6 @@ const TasksFilter = ({ filters, filter, changeFilterTodo }) => {
       ))}
     </ul>
   );
-};
-
-TasksFilter.defaultProps = {
-  filters: ['All'],
 };
 
 export default TasksFilter;

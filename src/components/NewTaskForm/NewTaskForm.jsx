@@ -1,51 +1,35 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from "react";
 
-export default class NewTaskForm extends Component {
-  constructor() {
-    super();
-    this.state = {
-      label: '',
+function NewTaskForm({ config, addTodo }) {
+    const [label, setLabel] = useState('');
+
+    function onChangeLabel(label) {
+      setLabel(label);
     };
-  }
 
-  static defaultProps = {
-    config: {
-      appName: 'Todo or not Todo?',
-    },
-  };
+    function onSubmitForm(e) {
+      e.preventDefault();
+      const newLabel = label;
+      if (newLabel.trim().length > 0) {
+        addTodo(newLabel);
+      }
+      setLabel('');
+    };
 
-  static propTypes = {
-    config: PropTypes.object,
-  };
-
-  onChangeLabel = (label) => {
-    this.setState({ label });
-  };
-
-  onSubmitForm = (e) => {
-    e.preventDefault();
-    const label = this.state.label;
-    if (label.trim().length > 0) {
-      this.props.addTodo(label);
-    }
-    this.setState({ label: '' });
-  };
-
-  render() {
     return (
       <header className="header">
-        <h1>{this.props.config.appName}</h1>
-        <form onSubmit={this.onSubmitForm}>
+        <h1>{config.appName}</h1>
+        <form onSubmit={onSubmitForm}>
           <input
             className="new-todo"
             placeholder="What needs to be done?"
             autoFocus
-            onChange={(e) => this.onChangeLabel(e.target.value)}
-            value={this.state.label}
+            onChange={(e) => onChangeLabel(e.target.value)}
+            value={label}
           />
         </form>
       </header>
     );
-  }
 }
+
+export default NewTaskForm;
