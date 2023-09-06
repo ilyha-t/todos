@@ -23,10 +23,11 @@ export default class App extends Component {
             ...this.state.todos,
             {
               id: Date.now(),
-              description: label,
+              description: label.text,
               done: false,
               important: false,
               created: new Date(),
+              timer: label.timer,
             },
           ],
         };

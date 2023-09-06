@@ -5,7 +5,11 @@ export default class NewTaskForm extends Component {
   constructor() {
     super();
     this.state = {
-      label: '',
+      label: {
+        text: '',
+        minutes: 0,
+        seconds: 0,
+      },
     };
   }
 
@@ -20,29 +24,74 @@ export default class NewTaskForm extends Component {
   };
 
   onChangeLabel = (label) => {
-    this.setState({ label });
+    this.setState({ label: { ...this.state.label, text: label } });
+  };
+
+  onChangeTimerSec = (seconds) => {
+    if (isNaN(Number(seconds))) {
+      return;
+    }
+
+    if (seconds >= 60) {
+      const totalMin = Math.floor(seconds / 60);
+      const totalSec = seconds % 60;
+      this.setState({ label: { ...this.state.label, minutes: this.state.label.minutes + totalMin, seconds: totalSec } });
+    } else if (seconds === '') {
+        this.setState({ label: { ...this.state.label, seconds: 0 } });
+    } else {
+        this.setState({ label: { ...this.state.label, seconds } });
+    }
+  };
+
+  onChangeTimerMin = (minutes) => {
+    this.setState({ label: { ...this.state.label, minutes: Number(minutes) } });
   };
 
   onSubmitForm = (e) => {
     e.preventDefault();
     const label = this.state.label;
-    if (label.trim().length > 0) {
+    if (label.text.trim().length > 0) {
       this.props.addTodo(label);
     }
-    this.setState({ label: '' });
+    this.setState({ label: {text: '', minutes: 0, seconds: 0} });
   };
 
   render() {
     return (
       <header className="header">
         <h1>{this.props.config.appName}</h1>
-        <form onSubmit={this.onSubmitForm}>
+        <form className="new-todo-form" onClick={this.onSubmitForm}>
           <input
+            type="text"
             className="new-todo"
             placeholder="What needs to be done?"
             autoFocus
             onChange={(e) => this.onChangeLabel(e.target.value)}
-            value={this.state.label}
+            value={this.state.label.text}
+          />
+          <input
+            type="number"
+            className="new-todo-form__timer"
+            placeholder="Min"
+            onChange={(e) => this.onChangeTimerMin(e.target.value)}
+            onKeyPress={(e) => {
+              if (isNaN(Number(e.key))) {
+                e.preventDefault();
+              }
+            }}
+            value={this.state.label.minutes > 0 ? this.state.label.minutes : ''}
+          />
+          <input
+            type="number"
+            className="new-todo-form__timer"
+            placeholder="Sec"
+            onChange={(e) => this.onChangeTimerSec(e.target.value)}
+            onKeyPress={(e) => {
+              if (isNaN(Number(e.key))) {
+                e.preventDefault();
+              }
+            }}
+            value={this.state.label.seconds > 0 ? this.state.label.seconds : ''}
           />
         </form>
       </header>

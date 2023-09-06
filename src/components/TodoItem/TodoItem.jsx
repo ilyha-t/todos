@@ -59,7 +59,12 @@ export default class TodoItem extends Component {
               onChange={() => this.props.doneTodo(this.props.todo)}
             />
             <label onClick={() => this.props.doneTodo(this.props.todo)}>
-              <span className="description">{this.props.todo.description}</span>
+              <span className="title">{this.props.todo.description}</span>
+              <span className="description">
+                  <button className="icon icon-play"></button>
+                  <button className="icon icon-pause"></button>
+                  12:25
+                </span>
               <span className="created">{this.state.updatePeriod}</span>
             </label>
           </form>
@@ -83,6 +88,7 @@ export default class TodoItem extends Component {
             value={this.props.todo.description}
             ref={this.inputRef}
           />
+          <button type="submit" style={{ display: 'none' }}></button>
         </form>
       </li>
     );
