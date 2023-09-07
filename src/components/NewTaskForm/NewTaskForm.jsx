@@ -32,6 +32,8 @@ export default class NewTaskForm extends Component {
       return;
     }
 
+    console.log(Number(seconds))
+
     if (seconds >= 60) {
       const totalMin = Math.floor(seconds / 60);
       const totalSec = seconds % 60;
@@ -44,23 +46,23 @@ export default class NewTaskForm extends Component {
   };
 
   onChangeTimerMin = (minutes) => {
+    console.log(Number(minutes))
     this.setState({ label: { ...this.state.label, minutes: Number(minutes) } });
   };
 
   onSubmitForm = (e) => {
-    e.preventDefault();
     const label = this.state.label;
     if (label.text.trim().length > 0) {
-      this.props.addTodo(label);
+      this.props.addTodo({...label, timer: Number(label.minutes * 60) + Number(label.seconds)});
+      this.setState({ label: {text: '', minutes: 0, seconds: 0} });
     }
-    this.setState({ label: {text: '', minutes: 0, seconds: 0} });
   };
 
   render() {
     return (
       <header className="header">
         <h1>{this.props.config.appName}</h1>
-        <form className="new-todo-form" onClick={this.onSubmitForm}>
+        <form className="new-todo-form" onKeyDown={e => e.keyCode === 13 && this.onSubmitForm()}>
           <input
             type="text"
             className="new-todo"

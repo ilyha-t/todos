@@ -7,6 +7,8 @@ export default class TodoItem extends Component {
     this.state = {
       edit: false,
       updatePeriod: '',
+      timer: {value: 0, active: false},
+      timerId: null
     };
     this.inputRef = React.createRef();
   }
@@ -16,6 +18,7 @@ export default class TodoItem extends Component {
   componentDidMount() {
     this.setState({
       updatePeriod: formatDistanceToNow(this.props.todo.created),
+      timer: {value: this.props.todo.timer, active: false},
     });
     this.updateIntervalFunc = setInterval(() => {
       this.setState({
@@ -24,8 +27,30 @@ export default class TodoItem extends Component {
     }, this.props.config.updateIntervalCreated);
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if(prevState.timer.active === false && this.state.timer.active) {
+      const timerTodo = setInterval(() => {
+        if(this.state.timer.value !== 0) {
+          this.setState({
+            timer: {...this.state.timer ,value: this.state.timer.value - 1},
+          })
+        } else {
+          clearInterval(this.state.timerId);
+        }
+      }, 1000);
+      this.setState({timerId: timerTodo})
+    }
+
+    if(this.props.todo.done && prevState.timer.active) {
+      clearInterval(this.state.timerId);
+      console.log(prevState);
+      this.setState({timer: {...prevState.timer, value: 0, active: false}});
+    }
+  }
+
   componentWillUnmount() {
     clearInterval(this.updateIntervalFunc);
+    clearInterval(this.state.timerId);
   }
 
   activateEditMode = () => {
@@ -47,6 +72,33 @@ export default class TodoItem extends Component {
     }
   };
 
+  calcTimer = (timer) => {
+    const min = Math.floor(timer / 60);
+    const sec = timer % 60;
+    return `${min <= 9 ? '0': ''}${min}:${sec <= 9 ? '0': ''}${sec}`;
+  };
+
+  playTimer = (e) => {
+    e.preventDefault();
+    if(this.state.timer.active || this.props.todo.done) {
+      return;
+    } else {
+      this.setState(() => {
+        return { timer: {...this.state.timer, active: true} };
+      });
+    };
+  }
+
+  pauseTimer = (e) => {
+    e.preventDefault();
+    if(this.state.timer.active || this.props.todo.done) {
+      this.setState(() => {
+        clearInterval(this.state.timerId);
+        return { timer: {...this.state.timer, active: false} };
+      });
+    }
+  };
+
   render() {
     return (
       <li className={(this.props.todo.done ? 'completed' : undefined) || (this.state.edit ? 'editing' : undefined)}>
@@ -58,13 +110,13 @@ export default class TodoItem extends Component {
               checked={this.props.todo.done}
               onChange={() => this.props.doneTodo(this.props.todo)}
             />
-            <label onClick={() => this.props.doneTodo(this.props.todo)}>
+            <label className="todo-item">
               <span className="title">{this.props.todo.description}</span>
               <span className="description">
-                  <button className="icon icon-play"></button>
-                  <button className="icon icon-pause"></button>
-                  12:25
-                </span>
+                  <button className="icon icon-play" onClick={(e) => this.playTimer(e)}></button>
+                  <button className="icon icon-pause" onClick={(e) => this.pauseTimer(e)}></button>
+                {this.calcTimer(this.state.timer.value)}
+              </span>
               <span className="created">{this.state.updatePeriod}</span>
             </label>
           </form>
