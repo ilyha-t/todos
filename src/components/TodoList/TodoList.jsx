@@ -2,7 +2,7 @@ import React from 'react';
 
 import TodoItem from '../TodoItem/TodoItem';
 
-const TodoList = ({ todos, doneTodo, deleteTodo, editTodo, config }) => {
+const TodoList = ({ todos, doneTodo, deleteTodo, editTodo, config, resetTodo }) => {
   return (
     <ul className="todo-list">
       {todos.map((todo) => (
@@ -13,6 +13,7 @@ const TodoList = ({ todos, doneTodo, deleteTodo, editTodo, config }) => {
           deleteTodo={deleteTodo}
           editTodo={editTodo}
           config={config}
+          resetTodo={resetTodo}
         />
       ))}
     </ul>

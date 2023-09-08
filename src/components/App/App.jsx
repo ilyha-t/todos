@@ -69,6 +69,7 @@ export default class App extends Component {
   filterTodo = (filterName) => {
     switch (filterName) {
       case 'Active':
+        console.log(this.state)
         this.setState({
           filterTodos: this.state.todos.filter((todo) => !todo.done),
         });
@@ -118,6 +119,23 @@ export default class App extends Component {
     }).then(() => this.filterTodo(this.state.filter));
   };
 
+  resetTodo = (todo, timer=0) => {
+    new Promise((resolve) => {
+      console.log(todo)
+      const findIndex = this.state.todos.findIndex((f) => f.id === todo.id);
+      this.setState(() => {
+        return {
+          todos: [
+            ...this.state.todos.slice(0, findIndex),
+            { ...this.state.todos[findIndex], timer },
+            ...this.state.todos.slice(findIndex + 1),
+          ],
+        };
+      });
+      resolve();
+    }).then(() => this.filterTodo(this.state.filter));
+  }
+
   render() {
     return (
       <section className="todoapp">
@@ -127,6 +145,7 @@ export default class App extends Component {
           doneTodo={this.doneTodo}
           deleteTodo={this.deleteTodo}
           editTodo={this.editTodo}
+          resetTodo={this.resetTodo}
           config={config}
         />
         <Footer

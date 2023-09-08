@@ -35,6 +35,7 @@ export default class TodoItem extends Component {
             timer: {...this.state.timer ,value: this.state.timer.value - 1},
           })
         } else {
+          this.props.resetTodo(this.props.todo);
           clearInterval(this.state.timerId);
         }
       }, 1000);
@@ -49,8 +50,10 @@ export default class TodoItem extends Component {
   }
 
   componentWillUnmount() {
-    clearInterval(this.updateIntervalFunc);
-    clearInterval(this.state.timerId);
+    console.log(this.state)
+    // this.props.resetTodo(this.props.todo, this.state.timer.value);
+    // clearInterval(this.updateIntervalFunc);
+    // clearInterval(this.state.timerId);
   }
 
   activateEditMode = () => {
@@ -79,6 +82,7 @@ export default class TodoItem extends Component {
   };
 
   playTimer = (e) => {
+    e.stopPropagation();
     e.preventDefault();
     if(this.state.timer.active || this.props.todo.done) {
       return;
@@ -90,6 +94,7 @@ export default class TodoItem extends Component {
   }
 
   pauseTimer = (e) => {
+    e.stopPropagation();
     e.preventDefault();
     if(this.state.timer.active || this.props.todo.done) {
       this.setState(() => {
@@ -109,8 +114,9 @@ export default class TodoItem extends Component {
               type="checkbox"
               checked={this.props.todo.done}
               onChange={() => this.props.doneTodo(this.props.todo)}
+              id={this.props.todo.id}
             />
-            <label className="todo-item">
+            <label className="todo-item" htmlFor={this.props.todo.done} onClick={() => this.props.doneTodo(this.props.todo)}>
               <span className="title">{this.props.todo.description}</span>
               <span className="description">
                   <button className="icon icon-play" onClick={(e) => this.playTimer(e)}></button>

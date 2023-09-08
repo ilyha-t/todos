@@ -255,7 +255,8 @@ body {
 
 .todo-list li label .title {
     word-break: break-all;
-    display: block;
+    display: grid;
+    grid-template-columns: 150px 1fr 1fr;
     line-height: 1.2;
     transition: color 0.4s;
     font-weight: 400;
