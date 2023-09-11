@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import TodoList from '../TodoList/TodoList';
 import Footer from '../Footer/Footer';
@@ -9,8 +9,31 @@ function App() {
   const [data, setData] = useState({
     todos: [],
     filter: 'All',
-    filterTodos: [],
   });
+
+  useEffect(() => {
+    for(let todo of data.todos) {
+      if(todo.timer.timerId === null && todo.timer.isActive) {
+        console.log('init timer');
+        let todoOld = todo;
+        const interval = setInterval(() => {
+            console.log('interval')
+            if (todoOld.timer.value !== 0) {
+              todoOld = {...todoOld, timer: {...todoOld.timer, value: todoOld.timer.value - 1, isActive: true, timerId: interval}};
+              changeTimer(todoOld);
+            } else {
+              console.log('delete timer');
+              clearInterval(interval);
+              todoOld = {...todoOld, timer: {...todoOld.timer, isActive: false, timerId: -1}};
+              changeTimer(todoOld);
+            }
+
+        }, 1000);
+      }
+    }
+  }, [data.todos, data.filter]);
+
+  useEffect(() => {console.log(data)}, [data.todos])
 
   function addTodo(todo) {
       setData(prevData => {
@@ -24,7 +47,7 @@ function App() {
               done: false,
               important: false,
               created: new Date(),
-              timer: todo.timer
+              timer: { ...todo.timer, timerId: null }
             },
           ]
         }});
@@ -43,6 +66,24 @@ function App() {
         };
       });
   };
+
+  function changeTimer(todo) {
+    const findIndex = data.todos.findIndex((f) => f.id === todo.id);
+    setData((prevData) => {
+      return {
+        ...prevData,
+        todos: [
+          ...prevData.todos.slice(0, findIndex),
+          { ...todo },
+          ...prevData.todos.slice(findIndex + 1),
+        ],
+      };
+    });
+  };
+
+  function pauseTimer(todo) {
+    changeTimer({ ...todo, timer: {...todo.timer, isActive: false} });
+  }
 
   function deleteTodo(id) {
       setData((prevData) => {
@@ -102,6 +143,7 @@ function App() {
           deleteTodo={deleteTodo}
           editTodo={editTodo}
           config={config}
+          pauseTimer={pauseTimer}
         />
         <Footer
           todoCount={data.todos.filter((todo) => !todo.done).length}

@@ -8,7 +8,7 @@ function NewTaskForm({ config, addTodo }) {
     function onSubmitForm() {
       const newLabel = label;
       if (newLabel.trim().length > 0) {
-        addTodo({ text: newLabel, timer: {value: minutes * 60 + seconds} });
+        addTodo({ text: newLabel, timer: {value: minutes * 60 + seconds, isActive: true, timerId: null} });
       }
       setLabel('');
       setMinutes(0);

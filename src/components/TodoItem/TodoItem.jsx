@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { func } from "prop-types";
 
-function TodoItem({ props, config, doneTodo, deleteTodo, editTodo }) {
+function TodoItem({ props, config, doneTodo, deleteTodo, editTodo, pauseTimer }) {
   const inputRef = React.createRef();
 
   const [todo, setTodo] = useState({
@@ -45,7 +45,7 @@ function TodoItem({ props, config, doneTodo, deleteTodo, editTodo }) {
   function calcTimer(sec) {
     const minutes = Math.floor(sec / 60);
     const seconds = sec % 60;
-    return `${minutes < 9 ? '0' : ''}${minutes}:${seconds < 9 ? '0' : ''}${seconds}`;
+    return `${minutes <= 9 ? '0' : ''}${minutes}:${seconds <= 9 ? '0' : ''}${seconds}`;
   }
 
     return (
@@ -63,7 +63,7 @@ function TodoItem({ props, config, doneTodo, deleteTodo, editTodo }) {
               <span className="title">{props.description}</span>
               <span className="description" onClick={e => e.preventDefault()}>
                   <button className="icon icon-play"></button>
-                  <button className="icon icon-pause"></button>
+                  <button className="icon icon-pause" onClick={() => pauseTimer(props)}></button>
                 {calcTimer(props.timer.value)}
               </span>
               <span className="created">{todo.updatePeriod}</span>
