@@ -2,30 +2,54 @@ import React, { useState } from "react";
 
 function NewTaskForm({ config, addTodo }) {
     const [label, setLabel] = useState('');
+    const [minutes, setMinutes] = useState(0);
+    const [seconds, setSeconds] = useState(0);
 
-    function onChangeLabel(label) {
-      setLabel(label);
-    };
-
-    function onSubmitForm(e) {
-      e.preventDefault();
+    function onSubmitForm() {
       const newLabel = label;
       if (newLabel.trim().length > 0) {
-        addTodo(newLabel);
+        addTodo({ text: newLabel, timer: {value: minutes * 60 + seconds} });
       }
       setLabel('');
+      setMinutes(0);
+      setSeconds(0);
     };
+
+    function translateIntoMinutes(sec) {
+      if(sec >= 60) {
+        const calcMin = Math.floor(sec / 60);
+        const calcSec = sec % 60;
+        setMinutes(minutes + calcMin);
+        setSeconds(calcSec);
+      } else {
+        setSeconds(sec);
+      }
+    }
 
     return (
       <header className="header">
         <h1>{config.appName}</h1>
-        <form onSubmit={onSubmitForm}>
+        <form className="new-todo-form" onKeyDown={e => e.keyCode === 13 && onSubmitForm()}>
           <input
             className="new-todo"
             placeholder="What needs to be done?"
             autoFocus
-            onChange={(e) => onChangeLabel(e.target.value)}
+            onChange={(e) => setLabel(e.target.value)}
             value={label}
+          />
+          <input
+            type="number"
+            className="new-todo-form__timer"
+            placeholder="Min"
+            onChange={(e) => setMinutes(minutes + Number(e.target.value))}
+            value={minutes > 0 ? minutes : ''}
+          />
+          <input
+            type="number"
+            className="new-todo-form__timer"
+            placeholder="Sec"
+            onChange={(e) => translateIntoMinutes(Number(e.target.value))}
+            value={seconds > 0 ? seconds : ''}
           />
         </form>
       </header>

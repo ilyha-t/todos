@@ -12,7 +12,7 @@ function App() {
     filterTodos: [],
   });
 
-  function addTodo(label) {
+  function addTodo(todo) {
       setData(prevData => {
         return {
           ...prevData,
@@ -20,10 +20,11 @@ function App() {
             ...prevData.todos,
             {
               id: Date.now(),
-              description: label,
+              description: todo.text,
               done: false,
               important: false,
               created: new Date(),
+              timer: todo.timer
             },
           ]
         }});
