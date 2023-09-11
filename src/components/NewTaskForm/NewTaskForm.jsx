@@ -43,6 +43,11 @@ function NewTaskForm({ config, addTodo }) {
             placeholder="Min"
             onChange={(e) => setMinutes(minutes + Number(e.target.value))}
             value={minutes > 0 ? minutes : ''}
+            onKeyPress={(e) => {
+              if (isNaN(Number(e.key))) {
+                e.preventDefault();
+              }
+            }}
           />
           <input
             type="number"
@@ -50,6 +55,11 @@ function NewTaskForm({ config, addTodo }) {
             placeholder="Sec"
             onChange={(e) => translateIntoMinutes(Number(e.target.value))}
             value={seconds > 0 ? seconds : ''}
+            onKeyPress={(e) => {
+              if (isNaN(Number(e.key))) {
+                e.preventDefault();
+              }
+            }}
           />
         </form>
       </header>
